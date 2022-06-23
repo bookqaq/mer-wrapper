@@ -34,6 +34,10 @@ var itemParams = struct {
 	itemMethod: http.MethodGet,
 }
 
+type MerProduct interface {
+	GetProductURL() string
+}
+
 type MercariV2Search struct {
 	IndexRouting    string                `json:"indexRouting"`
 	SearchSessionId string                `json:"searchSessionId"`
@@ -77,14 +81,40 @@ type ItemResultData struct {
 }
 
 type MercariDetail struct {
-	ProductId   string         `json:"id"`
-	ProductName string         `json:"name"`
-	Price       int            `json:"price"`
-	Seller      ItemSellerInfo `json:"seller"`
-	Status      string         `json:"status"`
+	ProductId         string         `json:"id"`
+	ProductName       string         `json:"name"`
+	Price             int            `json:"price"`
+	Seller            ItemSellerInfo `json:"seller"`
+	Status            string         `json:"status"`
+	Description       string         `json:"description"`
+	Condition         Name_Id_Unit   `json:"condition"`
+	Like              int            `json:"num_likes"`
+	Comment           int            `json:"num_comments"`
+	ImageURL          []string       `json:"photos"`
+	Created           int64          `json:"created"`
+	Updated           int64          `json:"updated"`
+	AnonymousShipping bool           `json:"is_anonymous_shipping"`
+	ShippingDuration  Name_Id_Unit   `json:"shipping_duration"`
+	ShippingFrom      Name_Id_Unit   `json:"shipping_from_area"`
+	ShippingMethod    Name_Id_Unit   `json:"shipping_method"`
+	ShippingPayer     Name_Id_Unit   `json:"shipping_payer"`
 }
 
 type ItemSellerInfo struct {
-	ID   int64  `json:"id"`
-	Name string `json:"name"`
+	ID           int64   `json:"id"`
+	Name         string  `json:"name"`
+	QuickShipper bool    `json:"quick_shipper"`
+	NumSell      int32   `json:"num_sell_items"`
+	Avatar       string  `json:"photo_thumbnail_url"`
+	Created      int64   `json:"created"`
+	SmsAuth      string  `json:"register_sms_confirmation"`
+	SmsAuthAt    string  `json:"register_sms_confirmation_at"`
+	Score        int     `json:"score"`
+	Rating       float32 `json:"star_rating_score"`
+}
+
+type ItemSellerRating struct {
+	Good   int32
+	Bad    int32
+	Normal int32
 }
