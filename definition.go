@@ -9,10 +9,7 @@ type SearchData struct {
 	TargetPrice [2]int
 }
 
-type MerClient struct {
-	ClientID string
-	Content  *http.Client
-}
+
 
 const (
 	rootURL = "https://api.mercari.jp/"

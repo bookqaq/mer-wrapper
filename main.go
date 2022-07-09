@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/bookqaq/mer-wrapper/common"
 	"github.com/google/uuid"
 )
 
@@ -34,10 +35,8 @@ func searchParse(p SearchData) ([]byte, error) {
 	return res, nil
 }
 
-var Client = MerClient{ClientID: "", Content: &http.Client{}}
-
-func (c *MerClient) fetch(req *http.Request) ([]byte, error) {
-	resp, err := c.Content.Do(req)
+func fetch(req *http.Request) ([]byte, error) {
+	resp, err := common.Client.Content.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +57,7 @@ func (c *MerClient) fetch(req *http.Request) ([]byte, error) {
 }
 
 // Not working (invalid "searchSessionId"), please use my v1 wrapper.
-func (c *MerClient) Search(data SearchData) ([]MercariV2Item, error) {
+func Search(data SearchData) ([]MercariV2Item, error) {
 	sdata, err := searchParse(data)
 	if err != nil {
 		return nil, err
@@ -73,7 +72,7 @@ func (c *MerClient) Search(data SearchData) ([]MercariV2Item, error) {
 	req.Header.Add("accept", "application/json, text/plain, */*")
 	req.Header.Add("x-platform", "web")
 
-	res, err := c.fetch(req)
+	res, err := fetch(req)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +85,7 @@ func (c *MerClient) Search(data SearchData) ([]MercariV2Item, error) {
 	return result, nil
 }
 
-func (c *MerClient) Item(item string) (MercariDetail, error) {
+func Item(item string) (MercariDetail, error) {
 	reqVal := url.Values{}
 	reqVal.Add("id", item)
 	url := fmt.Sprintf("%s?%s", itemParams.itemURL, reqVal.Encode())
@@ -99,7 +98,7 @@ func (c *MerClient) Item(item string) (MercariDetail, error) {
 	req.Header.Add("accept-encoding", "gzip, deflate, br")
 	req.Header.Add("accept", "application/json, text/plain, */*")
 	req.Header.Add("x-platform", "web")
-	res, err := c.fetch(req)
+	res, err := fetch(req)
 	if err != nil {
 		return MercariDetail{}, err
 	}

@@ -1,4 +1,4 @@
-package merwrapper
+package v1
 
 import (
 	"crypto/ecdsa"
@@ -13,8 +13,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
-	"github.com/bookqaq/mer-wrapper/common"
 )
 
 type ECDSASignature struct {
@@ -26,7 +24,6 @@ type payload struct {
 	Jti string `json:"jti"`
 	Htu string `json:"htu"`
 	Htm string `json:"htm"`
-	Uid string `json:"uuid"`
 }
 
 type pkey_jwk struct {
@@ -49,22 +46,22 @@ func byteToBase64URL(target []byte) string {
 func dPoPGenerator(uuid_ string, method string, url_ string) string { //因为有 url和uuid 包了
 	private_key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
-		fmt.Println("error at dPoPGenerator/ecdsa.GenerateKey():\n", err)
+		fmt.Println("Error at mercarigo//dPoP.go//dPoPGenerator//ecdsa.GenerateKey():\n", err)
 		os.Exit(60)
 	}
 
-	pl := payload{time.Now().Unix(), uuid_, url_, strings.ToUpper(method), common.Client.ClientID}
+	pl := payload{time.Now().Unix(), uuid_, url_, strings.ToUpper(method)}
 	pkjwk := pkey_jwk{"P-256", "EC", byteToBase64URL(private_key.PublicKey.X.Bytes()), byteToBase64URL(private_key.PublicKey.Y.Bytes())}
 	pkh := pkey_header{"dpop+jwt", "ES256", pkjwk}
 
 	headerString, err := json.Marshal(pkh)
 	if err != nil {
-		fmt.Println("error at dPoPGenerator/json.Marshal(pkh):\n", err)
+		fmt.Println("Error at mercarigo//dPoP.go//dPoPGenerator//json.Marshal(pkh):\n", err)
 		os.Exit(61)
 	}
 	payloadString, err := json.Marshal(pl)
 	if err != nil {
-		fmt.Println("error at dPoPGenerator/json.Marshal(pl):\n", err)
+		fmt.Println("Error at mercarigo//dPoP.go//dPoPGenerator//json.Marshal(pl):\n", err)
 		os.Exit(62)
 	}
 
