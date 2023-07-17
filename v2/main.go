@@ -1,4 +1,4 @@
-package merwrapper
+package v2
 
 import (
 	"bytes"
@@ -14,20 +14,32 @@ import (
 )
 
 func searchParse(p SearchData) ([]byte, error) {
-	tmp := uuid.NewString()
 	sp := MercariV2Search{}
+	sp.DefaultDatabases = []string{"DATASET_TYPE_MERCARI", "DATASET_TYPE_BEYOND"}
 	sp.IndexRouting = "INDEX_ROUTING_UNSPECIFIED"
+	sp.PageSize = p.Limit
+	// *sp.PageToken = "v1:0"	// only search one page for all tasks
+
+	// searchCondition
 	sp.SearchCondition.HasCoupon = false
 	sp.SearchCondition.Status = []string{"STATUS_ON_SALE"}
-	sp.SearchSessionId = tmp[:8] + tmp[9:13] + tmp[14:18] + tmp[19:22] + tmp[23:] // fail
-
+	// sp.SearchCondition.Sort = p.Sort
+	sp.SearchCondition.Sort = SearchOptionSortCreatedTime
+	sp.SearchCondition.Order = SearchOptionOrderDESC
 	sp.SearchCondition.Keyword = p.Keyword
-	sp.SearchCondition.Sort = p.Sort
-	sp.Page = p.Limit
 	if len(p.TargetPrice) == 2 && p.TargetPrice[0] >= 0 && p.TargetPrice[0] <= p.TargetPrice[1] {
 		sp.SearchCondition.PriceMin = p.TargetPrice[0]
 		sp.SearchCondition.PriceMax = p.TargetPrice[1]
 	}
+
+	sp.SearchSessionId = generateSearchSessionId(DefaultLengthSearchSessionId)
+	sp.ServiceFrom = "suruga"
+	sp.WithItemBrand = true
+	sp.WithItemPromotions = true
+	sp.WithItemSize = false
+	sp.WithItemSizes = true
+	sp.WithShopName = false
+
 	res, err := json.Marshal(sp)
 	if err != nil {
 		return nil, err
@@ -56,7 +68,6 @@ func fetch(req *http.Request) ([]byte, error) {
 	return result, nil
 }
 
-// Not working (invalid "searchSessionId"), please use my v1 wrapper.
 func Search(data SearchData) ([]MercariV2Item, error) {
 	sdata, err := searchParse(data)
 	if err != nil {
@@ -76,13 +87,13 @@ func Search(data SearchData) ([]MercariV2Item, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(res))
-	var result []MercariV2Item
+
+	var result MercariV2SearchResponse
 	err = json.Unmarshal(res, &result)
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+	return result.Items, nil
 }
 
 func Item(item string) (MercariDetail, error) {

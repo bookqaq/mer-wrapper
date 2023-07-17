@@ -1,12 +1,12 @@
-package merwrapper
+package v2
 
 import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
-	"encoding/asn1"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -46,6 +46,7 @@ func byteToBase64URL(target []byte) string {
 	return base64.RawURLEncoding.EncodeToString(target)
 }
 
+// a function that shouldn't fail
 func dPoPGenerator(uuid_ string, method string, url_ string) string { //因为有 url和uuid 包了
 	private_key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
@@ -72,21 +73,31 @@ func dPoPGenerator(uuid_ string, method string, url_ string) string { //因为�
 
 	hval := sha256.Sum256([]byte(data_unsigned))
 
-	signature, err := ecdsa.SignASN1(rand.Reader, private_key, hval[:])
+	r, s, err := ecdsa.Sign(rand.Reader, private_key, hval[:])
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(63)
 	}
-	sig := &ECDSASignature{}
-	if _, err := asn1.Unmarshal(signature, sig); err != nil {
-		fmt.Println(err)
-		os.Exit(64)
-	}
+	// sig := &ECDSASignature{}
+	// if _, err := asn1.Unmarshal(signature, sig); err != nil {
+	// 	fmt.Println(err)
+	// 	os.Exit(64)
+	// }
 
-	signatured := append(sig.R.Bytes(), sig.S.Bytes()...)
+	signatured := append(r.Bytes(), s.Bytes()...)
 
 	signaturedString := byteToBase64URL(signatured)
 
 	result := fmt.Sprintf("%s.%s", data_unsigned, signaturedString)
 	return result
+}
+
+func generateSearchSessionId(length int) string {
+	buflen := length
+	if buflen%2 != 0 {
+		buflen += 1
+	}
+	buf := make([]byte, buflen/2)
+	rand.Read(buf)
+	return hex.EncodeToString(buf)[:length]
 }
