@@ -1,6 +1,2 @@
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 h1:6zppjxzCulZykYSLyVDYbneBfbaBIQPYMevg0bEwv2s=
-golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
-golang.org/x/vuln v0.0.0-20220824170706-d578113f851a h1:/W6JiiJun9wbbZdzk7dD7DH98RdzWapv/jXkhXlowIA=
-golang.org/x/vuln v0.0.0-20220824170706-d578113f851a/go.mod h1:7tDfEDtOLlzHQRi4Yzfg5seVBSvouUIjyPzBx4q5CxQ=
