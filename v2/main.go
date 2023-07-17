@@ -27,7 +27,7 @@ func searchParse(p SearchData) ([]byte, error) {
 	sp.SearchCondition.Sort = SearchOptionSortCreatedTime
 	sp.SearchCondition.Order = SearchOptionOrderDESC
 	sp.SearchCondition.Keyword = p.Keyword
-	if len(p.TargetPrice) == 2 && p.TargetPrice[0] >= 0 && p.TargetPrice[0] <= p.TargetPrice[1] {
+	if p.TargetPrice != nil && len(p.TargetPrice) == 2 && p.TargetPrice[0] >= 0 && p.TargetPrice[0] <= p.TargetPrice[1] {
 		sp.SearchCondition.PriceMin = p.TargetPrice[0]
 		sp.SearchCondition.PriceMax = p.TargetPrice[1]
 	}
