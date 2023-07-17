@@ -6,7 +6,7 @@ type SearchData struct {
 	Keyword     string
 	Limit       int
 	Sort        string
-	TargetPrice *[2]int
+	TargetPrice [2]int
 }
 
 // const data
